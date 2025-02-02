@@ -8,11 +8,7 @@ interface GeorgeProps {
   messages: Message[];
 }
 
-export default function George({
-  username,
-  sendMessage,
-  messages,
-}: GeorgeProps) {
+export default function George({ sendMessage, messages }: GeorgeProps) {
   const [lastHandledMessageId, setLastHandledMessageId] = useState<
     string | null
   >(null);
@@ -24,8 +20,6 @@ export default function George({
     (message) => message.id === lastHandledMessageId
   );
 
-  console.log({ latestUserMessageIndex, lastHandledMessageIndex });
-
   if (lastHandledMessageIndex < latestUserMessageIndex) {
     return (
       <RespondGracefullyBehavior
@@ -34,7 +28,7 @@ export default function George({
         onSuccess={() => {
           setLastHandledMessageId(messages[latestUserMessageIndex].id);
         }}
-        onError={(err: any) => {
+        onError={(err: Error) => {
           setLastHandledMessageId(messages[latestUserMessageIndex].id);
           console.error(err);
           sendMessage("Sorry, I had an error.");

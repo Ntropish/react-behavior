@@ -9,9 +9,9 @@ export const messageSchema = z.object({
 
 export type Message = z.infer<typeof messageSchema>;
 
-export interface BehaviorNodeProps<T = unknown, E = Error> {
-  onSuccess: (response?: T) => void;
-  onError: (error?: E) => void;
+export interface BehaviorNodeProps<T = unknown, E = unknown> {
+  onSuccess?: (response: T) => void;
+  onError?: (error: E) => void;
 }
 
 export type BehaviorNodeRenderer = (
