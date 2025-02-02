@@ -3,6 +3,7 @@ import { useState, useCallback } from "react";
 import { Stack, Typography } from "@mui/material";
 import ChatMessagesDisplay from "../components/ChatMessagesDisplay";
 import ChatInput from "../components/ChatInput";
+import George from "../agents/George";
 
 export default function Home() {
   const [messages, setMessages] = useState([
@@ -24,6 +25,16 @@ export default function Home() {
     setMessages((prevMessages) => [...prevMessages, newMessage]);
   }, []);
 
+  const handleAssistantSendMessage = useCallback((text: string) => {
+    const newMessage = {
+      text,
+      author: "assistant",
+      timestamp: new Date().toISOString(),
+      id: `${Date.now()}`,
+    };
+    setMessages((prevMessages) => [...prevMessages, newMessage]);
+  }, []);
+
   return (
     <Stack
       direction="column"
@@ -37,6 +48,12 @@ export default function Home() {
       <Typography variant="h4" color="text.secondary">
         Home
       </Typography>
+
+      <George
+        username="assistant"
+        sendMessage={handleAssistantSendMessage}
+        messages={messages}
+      />
 
       <ChatMessagesDisplay messages={messages} />
 

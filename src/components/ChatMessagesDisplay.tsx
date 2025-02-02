@@ -1,15 +1,10 @@
 import { Box, Divider, Stack, Typography } from "@mui/material";
 
-import { formatDistanceToNow } from "date-fns";
+import { Message } from "../types";
 
 interface ChatMessagesDisplayProps {
   userName?: string;
-  messages: {
-    text: string;
-    author: string;
-    timestamp: string;
-    id: string;
-  }[];
+  messages: Message[];
 }
 
 export default function ChatMessagesDisplay({
