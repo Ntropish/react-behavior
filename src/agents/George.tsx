@@ -1,5 +1,6 @@
-import { useEffect } from "react";
+import { useState } from "react";
 import { Message } from "../types";
+import RespondGracefullyBehavior from "../behaviors/RespondGracefullyBehavior";
 
 interface GeorgeProps {
   username: string;
@@ -7,36 +8,40 @@ interface GeorgeProps {
   messages: Message[];
 }
 
-const randomResponses = [
-  "I'm not sure how to respond to that.",
-  "Can you please clarify?",
-  "I don't have an answer for that right now.",
-  "That's an interesting question.",
-  "I'm still learning about that topic.",
-  "I need more information to provide a good answer.",
-  "That's outside my current knowledge base.",
-  "I can't help you with that.",
-  "I'm not programmed to answer that question.",
-  "I don't have enough context to respond.",
-];
-
 export default function George({
   username,
   sendMessage,
   messages,
 }: GeorgeProps) {
-  // respond to other people's messages
-  useEffect(() => {
-    const lastMessage = messages[messages.length - 1];
+  const [lastHandledMessageId, setLastHandledMessageId] = useState<
+    string | null
+  >(null);
+  const latestUserMessageIndex = messages.findLastIndex(
+    (message) => message.author === "user"
+  );
 
-    if (lastMessage && lastMessage.author !== username) {
-      setTimeout(() => {
-        sendMessage(
-          randomResponses[Math.floor(Math.random() * randomResponses.length)]
-        );
-      }, 1000);
-    }
-  }, [messages, sendMessage, username]);
+  const lastHandledMessageIndex = messages.findLastIndex(
+    (message) => message.id === lastHandledMessageId
+  );
+
+  console.log({ latestUserMessageIndex, lastHandledMessageIndex });
+
+  if (lastHandledMessageIndex < latestUserMessageIndex) {
+    return (
+      <RespondGracefullyBehavior
+        key={latestUserMessageIndex}
+        sendMessage={(message) => sendMessage(message)}
+        onSuccess={() => {
+          setLastHandledMessageId(messages[latestUserMessageIndex].id);
+        }}
+        onError={(err: any) => {
+          setLastHandledMessageId(messages[latestUserMessageIndex].id);
+          console.error(err);
+          sendMessage("Sorry, I had an error.");
+        }}
+      />
+    );
+  }
 
   return null;
 }
