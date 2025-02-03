@@ -49,7 +49,7 @@ export default function ChatMessagesDisplay({
   // When new messages come in from userName, scroll to bottom.
   useEffect(() => {
     const lastMessage = messages[messages.length - 1];
-    if (lastMessage?.author === userName) {
+    if (lastMessage?.role === "user") {
       const container = containerRef.current;
       if (!container) return;
       container.scrollTop = container.scrollHeight;
@@ -77,26 +77,23 @@ export default function ChatMessagesDisplay({
             spacing={0.2}
             alignItems="flex-start"
             sx={{ mb: 0.4 }}
-            justifyContent={
-              message.author === userName ? "flex-end" : "flex-start"
-            }
+            justifyContent={message.role === "user" ? "flex-end" : "flex-start"}
           >
             <Stack
               direction="column"
               spacing={0.2}
               sx={{
                 maxWidth: "70%",
-                alignItems:
-                  message.author === userName ? "flex-end" : "flex-start",
+                alignItems: message.role === "user" ? "flex-end" : "flex-start",
               }}
             >
               <Typography variant="body1" color="text.primary">
-                {message.text}
+                {message.content}
               </Typography>
             </Stack>
           </Stack>
           {index !== messages.length - 1 &&
-            message.author !== messages[index + 1].author && (
+            message.authorName !== messages[index + 1].authorName && (
               <Divider sx={{ my: 1 }} />
             )}
         </Box>

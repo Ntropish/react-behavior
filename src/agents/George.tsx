@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Message } from "../types";
-import RespondGracefullyBehavior from "../behaviors/RespondGracefullyBehavior";
+import { convertMessageToChatCompletionMessage, Message } from "../types";
+
+import ChooseProcedureBehavior from "./ChooseProcedure";
 
 interface GeorgeProps {
   username: string;
@@ -13,7 +14,7 @@ export default function George({ sendMessage, messages }: GeorgeProps) {
     string | null
   >(null);
   const latestUserMessageIndex = messages.findLastIndex(
-    (message) => message.author === "user"
+    (message) => message.role === "user"
   );
 
   const lastHandledMessageIndex = messages.findLastIndex(
@@ -21,17 +22,17 @@ export default function George({ sendMessage, messages }: GeorgeProps) {
   );
 
   if (lastHandledMessageIndex < latestUserMessageIndex) {
+    const messagesTail = messages.slice(lastHandledMessageIndex + 1);
     return (
-      <RespondGracefullyBehavior
-        key={latestUserMessageIndex}
-        sendMessage={(message) => sendMessage(message)}
-        onSuccess={() => {
-          setLastHandledMessageId(messages[latestUserMessageIndex].id);
-        }}
+      <ChooseProcedureBehavior
+        messages={messagesTail.map(convertMessageToChatCompletionMessage)}
         onError={(err: Error) => {
           setLastHandledMessageId(messages[latestUserMessageIndex].id);
           console.error(err);
           sendMessage("Sorry, I had an error.");
+        }}
+        onSuccess={() => {
+          setLastHandledMessageId(messages[latestUserMessageIndex].id);
         }}
       />
     );

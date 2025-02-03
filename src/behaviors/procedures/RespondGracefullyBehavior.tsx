@@ -1,9 +1,9 @@
 import { useState } from "react";
 
-import randomItemFromArray from "../util/randomItemFromArray";
-import { BehaviorNodeProps } from "../types";
-import SequenceDecorator from "./decorators/Sequence";
-import SimulateResponseBehavior from "./SimulateResponseBehavior";
+import randomItemFromArray from "../../util/randomItemFromArray";
+import { BehaviorNodeProps } from "../../types";
+import SequenceDecorator from "../decorators/Sequence";
+import SimulateResponse from "../tasks/SimulateResponse";
 
 const randomInitialResponses = [
   "Got it! Let me think about it for a moment.",
@@ -54,7 +54,7 @@ export default function RespondGracefullyBehavior({
       onError={() => handleError?.(new Error("Sequence failed"))}
     >
       {(injectedProps: BehaviorNodeProps) => (
-        <SimulateResponseBehavior
+        <SimulateResponse
           {...injectedProps}
           minDelay={200}
           maxDelay={1000}
@@ -63,7 +63,7 @@ export default function RespondGracefullyBehavior({
         />
       )}
       {(injectedProps: BehaviorNodeProps) => (
-        <SimulateResponseBehavior
+        <SimulateResponse
           {...injectedProps}
           minDelay={5000}
           maxDelay={10000}

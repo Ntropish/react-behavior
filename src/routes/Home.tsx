@@ -8,27 +8,30 @@ import George from "../agents/George";
 export default function Home() {
   const [messages, setMessages] = useState([
     {
-      text: "Hello, how can I help you?",
-      author: "assistant",
+      content: "Hello, how can I help you?",
+      role: "assistant",
+      authorName: "George",
       timestamp: new Date().toISOString(),
       id: "1",
     },
   ]);
 
-  const handleSendMessage = useCallback((text: string) => {
+  const handleSendMessage = useCallback((content: string) => {
     const newMessage = {
-      text,
-      author: "user",
+      content,
+      role: "user",
+      authorName: "User",
       timestamp: new Date().toISOString(),
       id: `${Date.now()}`,
     };
     setMessages((prevMessages) => [...prevMessages, newMessage]);
   }, []);
 
-  const handleAssistantSendMessage = useCallback((text: string) => {
+  const handleAssistantSendMessage = useCallback((content: string) => {
     const newMessage = {
-      text,
-      author: "assistant",
+      content,
+      role: "assistant",
+      authorName: "George",
       timestamp: new Date().toISOString(),
       id: `${Date.now()}`,
     };
