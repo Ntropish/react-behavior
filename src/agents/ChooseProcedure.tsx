@@ -8,6 +8,7 @@ import {
 } from "../types";
 
 import { z } from "zod";
+import sentinel_lights_office_basic from "../api/sentinel/lights/office/basic";
 
 interface ChooseProcedureProps
   extends BehaviorNodeProps<ToolCallChatCompletionChoice, Error> {
@@ -55,6 +56,24 @@ const procedures: Tool[] = [
       },
     },
   },
+  {
+    type: "function",
+    function: {
+      name: "set_room_color",
+      description: "Set the color of the lights in the room.",
+      parameters: {
+        type: "object",
+        properties: {
+          bri: { type: "number", description: "The brightness of the lights." },
+          sat: { type: "number", description: "The saturation of the lights." },
+          hue: { type: "number", description: "The hue of the lights." },
+          on: { type: "boolean", description: "Whether the lights are on." },
+        },
+        required: ["hex"],
+        additionalProperties: false,
+      },
+    },
+  },
 ];
 
 const set_background_color_argumentSchema = z.object({
@@ -64,6 +83,13 @@ const set_background_color_argumentSchema = z.object({
 const riddle_argumentSchema = z.object({
   question: z.string(),
   answer: z.string(),
+});
+
+const set_room_color_argumentSchema = z.object({
+  bri: z.number().min(0).max(255),
+  sat: z.number().min(0).max(255),
+  hue: z.number().min(0).max(65535),
+  on: z.boolean(),
 });
 
 const ChooseProcedureBehavior: React.FC<ChooseProcedureProps> = ({
@@ -102,6 +128,24 @@ const ChooseProcedureBehavior: React.FC<ChooseProcedureProps> = ({
               console.error(result.error);
             }
 
+            break;
+          }
+          case "set_room_color": {
+            const args = JSON.parse(tool_call.function.arguments);
+            const result = set_room_color_argumentSchema.safeParse(args);
+
+            if (result.success) {
+              const { bri, sat, hue, on } = result.data;
+              // console.log(bri, sat, hue, on);
+              sentinel_lights_office_basic({
+                bri,
+                sat,
+                hue,
+                on,
+              });
+            } else {
+              console.error(result.error);
+            }
             break;
           }
           default:

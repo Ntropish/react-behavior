@@ -54,6 +54,11 @@ export const numberPropertySchema = z.object({
   description: z.string(),
 });
 
+export const booleanPropertySchema = z.object({
+  type: z.literal("boolean"),
+  description: z.string(),
+});
+
 export const toolSchema = z.object({
   type: z.enum(["function"]),
   function: z.object({
@@ -62,7 +67,11 @@ export const toolSchema = z.object({
     parameters: z.object({
       type: z.literal("object"),
       properties: z.record(
-        z.union([stringPropertySchema, numberPropertySchema])
+        z.union([
+          stringPropertySchema,
+          numberPropertySchema,
+          booleanPropertySchema,
+        ])
       ),
       required: z.array(z.string()),
       additionalProperties: z.literal(false),
